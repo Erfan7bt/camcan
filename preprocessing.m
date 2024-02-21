@@ -48,52 +48,73 @@ for i = 1:1 %size(subjects) %in case for all the present subj
     plot_data(save_report, raw_data, layout, channel_names, ['raw_after_import_' names]);
     
     clearvars raw_data layout
+    cfg=[];
+    cfgp.dataset = filename;
+    cfg.continuous='yes';
+    cfg.channel='all';
+    cfg.demean='yes';
+    cfg.bpfilter = 'yes';
+    cfg.bpfreq = [1 45]; %for 100 hz resolution
+    cfg.bsfilter = 'yes';
+    cfg.bsfreq = [48 52];
+    resampled_filtered_data=ft_preprocessing(cfg);
+    info.freq = cfg.bpfreq;
+    %info.bs = cfg.bsfreq;
+    info.orig_sf = resampled_filtered_data.fsample;
+    info.nchan = length(resampled_filtered_data.label);
+    info.minutes = (size(resampled_filtered_data.time{1,1},2))/resampled_filtered_data.fsample/60;
+    
+    cfg = [];
+    cfg.resamplefs = 200;
+    cfg.method = 'downsample';
+    data_resampled=ft_resampledata(cfg,resampled_filtered_data);
+    info.fs = cfg.resamplefs;
 %% Read and apply filter channesl by channel
     % loading each channel at at a time (for memory constrains)
     % filteriing, and resampleing to 200
-    for i=1:nchans
-        
-        cfgp= [];
-        cfgp.dataset = filename;
-        cfgp.channel = i;
-        %baseline correction
-        cfgp.demean='yes';
-        cfgp.bpfilter = 'yes';
-        % default bpfilter type is Butterworth 
-        % from ft_preproc_bandpassfilter, low level preprocessin function:
-        % filter order, default is 4 (but) or dependent on frequency band and data length (fir/firls)
-        cfgp.bpfreq = [1 45]; %for 100 hz resolution
-        cfgp.bsfilter = 'yes';
-        cfgp.bsfreq = [48 52];
-        datp= ft_preprocessing (cfgp);
-        %lp hp ??
-        
-        % cfgp.lpfilter="yes";
-        % cfgp.hpfilter="yes";
-        % cfgp.lpfreq=48;
-        % cfgp.hpfreq=52;
-
-        %saving the info
-        info.freq = cfgp.bpfreq;
-        info.bs = cfgp.bsfreq;
-        info.orig_sf = datp.fsample;
-        info.nchan = length(datp.label);
-        info.minutes = (size(datp.time{1,1},2))/datp.fsample/60;
-        
-        %Downsampleing 
-             
-        cfgr= [];
-        cfgr.resamplefs = 200;
-        cfgr.method = 'downsample';
-        info.fs = cfgr.resamplefs;
-        datr{i}= ft_resampledata(cfgr, datp);
-        
-        clearvars datp
-    end
-    
-    % apend the channels
-    cfg = [];
-    resampled_filtered_data = ft_appenddata(cfg, datr{:});
+    % for i=1:nchans
+    % 
+    %     cfgp= [];
+    %     cfgp.dataset = filename;
+    %     cfgp.channel = i;
+    %     %baseline correction
+    %     cfgp.demean='yes';
+    %     cfgp.bpfilter = 'yes';
+    %     % default bpfilter type is Butterworth 
+    %     % from ft_preproc_bandpassfilter, low level preprocessin function:
+    %     % filter order, default is 4 (but) or dependent on frequency band and data length (fir/firls)
+    %     cfgp.bpfreq = [1 45]; %for 100 hz resolution
+    %     cfgp.bsfilter = 'yes';
+    %     cfgp.bsfreq = [48 52];
+    %     datp= ft_preprocessing (cfgp);
+    %     %lp hp ??
+    % 
+    %     % cfgp.lpfilter="yes";
+    %     % cfgp.hpfilter="yes";
+    %     % cfgp.lpfreq=48;
+    %     % cfgp.hpfreq=52;
+    % 
+    %     %saving the info
+    %     info.freq = cfgp.bpfreq;
+    %     info.bs = cfgp.bsfreq;
+    %     info.orig_sf = datp.fsample;
+    %     info.nchan = length(datp.label);
+    %     info.minutes = (size(datp.time{1,1},2))/datp.fsample/60;
+    % 
+    %     %Downsampleing 
+    % 
+    %     cfgr= [];
+    %     cfgr.resamplefs = 200;
+    %     cfgr.method = 'downsample';
+    %     info.fs = cfgr.resamplefs;
+    %     datr{i}= ft_resampledata(cfgr, datp);
+    % 
+    %     clearvars datp
+    % end
+    % 
+    % % apend the channels
+    % cfg = [];
+    % resampled_filtered_data = ft_appenddata(cfg, datr{:});
     %% layout
     % https://www.fieldtriptoolbox.org/faq/why_are_there_multiple_neighbour_templates_for_the_neuromag306_system/
     % https://imaging.mrc-cbu.cam.ac.uk/meg/VectorviewDescription#Magsgrads
@@ -124,7 +145,6 @@ for i = 1:1 %size(subjects) %in case for all the present subj
     for c= 1:1
             plot_data(save_report, resampled_filtered_data, layout{c}, channel_names{c}, ['after_import_' names{c}]);
     end
-    
     %% regress EOG and ECG data
     eeg_data = resampled_filtered_data.trial{1,1}';
     eog_data = resampled_filtered_data.trial{1,1}(eogs,:)';
