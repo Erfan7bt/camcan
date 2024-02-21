@@ -1,6 +1,6 @@
 %add fieldtrip to path
 %replace your fieldtrip path 
-addpath /home/erfan/fieldtrip-20230118/
+addpath /data/erfan/fieldtrip-20240110/
 ft_defaults
 clear info
 
@@ -49,7 +49,7 @@ for i = 1:1 %size(subjects) %in case for all the present subj
     
     clearvars raw_data layout
     cfg=[];
-    cfgp.dataset = filename;
+    cfg.dataset = filename;
     cfg.continuous='yes';
     cfg.channel='all';
     cfg.demean='yes';
