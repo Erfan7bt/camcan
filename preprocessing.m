@@ -203,18 +203,18 @@ for i = 1:1 %size(subjects) %in case for all the present subj
         plot_data(save_report, data_seg, layout{c}, channel_names{c}, ['after_rej_' names{c}]);
     end
     % timer = toc;
-    info.time = timer;
+    % info.time = timer;
      %% save
-    info.subject_id= subj;
+    % info.subject_id= subj;
     disp(['This data is saved in ' [save_prep subj] ' under the name' subj]);
     ft_write_data([save_prep subj], data_seg, 'dataformat', 'matlab');
     save([save_report '/info.mat'],'info');
     % mkdir(save_report);
-    preproc_report(info,save_report);
+    % preproc_report(info,save_report);
     % convert tex to pdf
-    command = ['cd ', save_report,'; ', 'yes " " | /usr/bin/pdflatex  ',...
-    'report.tex;'];
-    system(command);
+    % command = ['cd ', save_report,'; ', 'yes " " | /usr/bin/pdflatex  ',...
+    % 'report.tex;'];
+    % system(command);
 
     clearvars resampled_filtered_data data_seg data_cleaned
 end
