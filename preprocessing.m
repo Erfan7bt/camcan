@@ -15,7 +15,7 @@ subjects = subjects([subjects.isdir]);  % keep only directories
 subjects = subjects(~ismember({subjects.name}, {'.', '..'}));  % remove '.' and '..'
 
 %% loop through each subject 
-for i = 1:1 %size(subjects) %in case for all the present subj
+for i = 1:size(subjects) %in case for all the present subj
     subj = subjects(i).name;
      
     % search for .fif files in any subfolder
