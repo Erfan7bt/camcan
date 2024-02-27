@@ -1,4 +1,4 @@
-# Fieldtrip Preprocessing Tutorial
+# camcan data playground 
 
 ### requirements
 - [Fieldtrip](https://www.fieldtriptoolbox.org/download/)
