@@ -202,7 +202,7 @@ for i = 1:1 %size(subjects) %in case for all the present subj
     for c= 1:1
         plot_data(save_report, data_seg, layout{c}, channel_names{c}, ['after_rej_' names{c}]);
     end
-    timer = toc;
+    % timer = toc;
     info.time = timer;
      %% save
     info.subject_id= subj;
